@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config';
+import { getCollection } from 'astro:content';
+import { postUrl, fmtDate } from '../utils/blog';
+
+// 最新 3 篇文章
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+// 精选项目
+const projects = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 2);
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="grid-bg relative border-b border-line">
+    <div class="mx-auto max-w-5xl px-6 py-28 sm:py-36">
+      <p class="font-mono text-sm text-accent mb-4">$ whoami</p>
+      <h1 class="text-4xl sm:text-6xl font-bold leading-tight">
+        你好，我是 <span class="text-gradient">{site.name}</span>
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-ink-dim leading-relaxed">
+        {site.intro}
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a
+          href="/projects"
+          class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-bg shadow-glow hover:bg-accent-glow transition-colors"
+        >
+          看看我的项目
+        </a>
+        <a
+          href="/blog"
+          class="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-accent/50 hover:text-accent transition-colors"
+        >
+          阅读博客
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 精选项目 -->
+  <section class="mx-auto max-w-5xl px-6 py-16">
+    <div class="flex items-end justify-between mb-8">
+      <h2 class="text-2xl font-bold">
+        <span class="font-mono text-accent text-base mr-2">01.</span>精选项目
+      </h2>
+      <a href="/projects" class="text-sm text-ink-dim hover:text-accent transition-colors">全部 →</a>
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2">
+      {projects.map((p) => (
+        <a href={`/projects#${p.slug}`} class="card p-6 block">
+          <h3 class="text-lg font-semibold text-ink">{p.data.title}</h3>
+          <p class="mt-2 text-sm text-ink-dim leading-relaxed">{p.data.description}</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {p.data.stack.map((s) => (
+              <span class="font-mono text-xs text-accent/80 bg-accent/5 border border-accent/20 rounded px-2 py-0.5">{s}</span>
+            ))}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- 最新文章 -->
+  <section class="mx-auto max-w-5xl px-6 py-8">
+    <div class="flex items-end justify-between mb-8">
+      <h2 class="text-2xl font-bold">
+        <span class="font-mono text-accent text-base mr-2">02.</span>最新文章
+      </h2>
+      <a href="/blog" class="text-sm text-ink-dim hover:text-accent transition-colors">全部 →</a>
+    </div>
+    <ul class="divide-y divide-line">
+      {posts.map((post) => (
+        <li>
+          <a href={postUrl(post)} class="group flex items-baseline justify-between gap-4 py-4">
+            <span class="text-ink group-hover:text-accent transition-colors">{post.data.title}</span>
+            <span class="font-mono text-xs text-ink-faint whitespace-nowrap">{fmtDate(post.data.date)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

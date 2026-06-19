@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<BaseLayout title="项目" description="我做过的嵌入式项目与作品。">
+  <section class="mx-auto max-w-5xl px-6 py-16">
+    <p class="font-mono text-sm text-accent mb-4">$ ls ./projects</p>
+    <h1 class="text-4xl font-bold mb-3">项目作品</h1>
+    <p class="text-ink-dim mb-12">这里展示我做过的一些项目。点击可查看详情。</p>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      {projects.map((p) => (
+        <article id={p.slug} class="card p-6 flex flex-col scroll-mt-24">
+          <h2 class="text-xl font-semibold text-ink">{p.data.title}</h2>
+          <p class="mt-2 text-sm text-ink-dim leading-relaxed flex-1">{p.data.description}</p>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            {p.data.stack.map((s) => (
+              <span class="font-mono text-xs text-accent/80 bg-accent/5 border border-accent/20 rounded px-2 py-0.5">{s}</span>
+            ))}
+          </div>
+
+          <div class="mt-5 flex items-center gap-4 text-sm">
+            <a href={`/projects/${p.slug}`} class="text-accent hover:underline underline-offset-4">查看详情 →</a>
+            {p.data.repo && (
+              <a href={p.data.repo} target="_blank" rel="noopener noreferrer" class="text-ink-dim hover:text-accent transition-colors">代码仓库</a>
+            )}
+            {p.data.link && (
+              <a href={p.data.link} target="_blank" rel="noopener noreferrer" class="text-ink-dim hover:text-accent transition-colors">演示</a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

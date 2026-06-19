@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+// 统计每个标签的文章数
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="标签" description="按标签浏览全部文章。">
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <p class="font-mono text-sm text-accent mb-4">$ ls ./tags</p>
+    <h1 class="text-4xl font-bold mb-3">标签</h1>
+    <p class="text-ink-dim mb-12">按主题浏览文章。</p>
+
+    {tags.length === 0 ? (
+      <p class="text-ink-dim">还没有标签。在文章 frontmatter 里写 <code class="font-mono text-accent">tags: [嵌入式]</code> 即可。</p>
+    ) : (
+      <div class="flex flex-wrap gap-3">
+        {tags.map(([tag, count]) => (
+          <a
+            href={`/tags/${tag}`}
+            class="card px-4 py-2 flex items-center gap-2 group"
+          >
+            <span class="font-mono text-accent">#{tag}</span>
+            <span class="text-xs text-ink-faint">{count}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { postUrl, fmtDate } from '../../utils/blog';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = new Set<string>();
+  posts.forEach((p) => p.data.tags.forEach((t) => tags.add(t)));
+
+  return [...tags].map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((p) => p.data.tags.includes(tag))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`} description={`标签 ${tag} 下的全部文章。`}>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <a href="/tags" class="font-mono text-sm text-ink-dim hover:text-accent transition-colors">← 全部标签</a>
+    <h1 class="text-4xl font-bold mt-6 mb-3">
+      <span class="font-mono text-accent">#</span>{tag}
+    </h1>
+    <p class="text-ink-dim mb-12">共 {posts.length} 篇文章。</p>
+
+    <ul class="divide-y divide-line">
+      {posts.map((post) => (
+        <li>
+          <a href={postUrl(post)} class="group block py-4">
+            <div class="flex items-baseline justify-between gap-4">
+              <span class="text-ink group-hover:text-accent transition-colors font-medium">{post.data.title}</span>
+              <span class="font-mono text-xs text-ink-faint whitespace-nowrap">{fmtDate(post.data.date)}</span>
+            </div>
+            {post.data.description && (
+              <p class="mt-1 text-sm text-ink-dim leading-relaxed">{post.data.description}</p>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

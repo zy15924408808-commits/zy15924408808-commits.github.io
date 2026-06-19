@@ -1,0 +1,33 @@
+---
+import { site } from '../config';
+
+const year = new Date().getFullYear();
+
+const links = [
+  { label: 'GitHub', href: site.social.github },
+  { label: 'Bilibili', href: site.social.bilibili },
+  { label: '知乎', href: site.social.zhihu },
+  { label: 'Email', href: site.email ? `mailto:${site.email}` : '' },
+  { label: 'RSS', href: '/rss.xml' },
+].filter((l) => l.href);
+---
+
+<footer class="border-t border-line mt-24">
+  <div class="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="text-sm text-ink-faint font-mono">
+      © {year} {site.name}. {site.tagline}
+    </p>
+    <div class="flex items-center gap-4 text-sm">
+      {links.map((l) => (
+        <a
+          href={l.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-ink-dim hover:text-accent transition-colors"
+        >
+          {l.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</footer>

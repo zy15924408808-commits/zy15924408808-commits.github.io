@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { postUrl, fmtDate, groupByCategory } from '../../utils/blog';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// 按分类（文件夹）分组
+const categories = groupByCategory(posts);
+---
+
+<BaseLayout title="博客" description="我的学习笔记与思考。">
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <p class="font-mono text-sm text-accent mb-4">$ cat ./blog/**/*.md</p>
+    <h1 class="text-4xl font-bold mb-3">博客</h1>
+    <div class="flex items-center gap-4 mb-12">
+      <p class="text-ink-dim">学习笔记、项目记录与一些思考。</p>
+      <a href="/categories" class="text-sm text-ink-dim hover:text-accent transition-colors whitespace-nowrap">分类 →</a>
+      <a href="/tags" class="text-sm text-ink-dim hover:text-accent transition-colors whitespace-nowrap">标签 →</a>
+    </div>
+
+    {posts.length === 0 ? (
+      <p class="text-ink-dim">还没有文章。把 Obsidian 写的 .md 文件放进 <code class="font-mono text-accent">src/content/blog/</code>（可建子文件夹分类）就会出现在这里。</p>
+    ) : (
+      categories.map(([cat, catPosts]) => (
+        <div class="mb-12">
+          <a href={`/categories/${cat}`} class="group inline-flex items-center gap-2 mb-4">
+            <span class="font-mono text-accent">▸</span>
+            <h2 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">{cat}</h2>
+            <span class="text-xs text-ink-faint">{catPosts.length}</span>
+          </a>
+          <ul class="divide-y divide-line border-l border-line pl-5 ml-1">
+            {catPosts.map((post) => (
+              <li>
+                <a href={postUrl(post)} class="group block py-4">
+                  <div class="flex items-baseline justify-between gap-4">
+                    <span class="text-ink group-hover:text-accent transition-colors font-medium">{post.data.title}</span>
+                    <span class="font-mono text-xs text-ink-faint whitespace-nowrap">{fmtDate(post.data.date)}</span>
+                  </div>
+                  {post.data.description && (
+                    <p class="mt-1 text-sm text-ink-dim leading-relaxed">{post.data.description}</p>
+                  )}
+                  {post.data.tags.length > 0 && (
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      {post.data.tags.map((t) => (
+                        <span class="font-mono text-[11px] text-ink-faint">#{t}</span>
+                      ))}
+                    </div>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    )}
+  </section>
+</BaseLayout>

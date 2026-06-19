@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.06), transparent 40%),
+    radial-gradient(circle at 85% 0%, rgba(74, 222, 128, 0.05), transparent 35%);
+  background-attachment: fixed;
+}
+
+/* 细网格背景，增强科技感 */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* 渐变文字 */
+.text-gradient {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #22d3ee 0%, #4ade80 100%);
+}
+
+/* 卡片悬停微光 */
+.card {
+  @apply rounded-xl border border-line bg-bg-card/60 backdrop-blur-sm transition-all duration-300;
+}
+.card:hover {
+  @apply border-accent/40 shadow-glow-sm -translate-y-0.5;
+}
+
+/* 文章正文排版 */
+.prose-tech {
+  @apply text-ink/90 leading-relaxed;
+}
+.prose-tech h2 {
+  @apply text-2xl font-semibold text-ink mt-10 mb-4 border-l-2 border-accent pl-3;
+}
+.prose-tech h3 {
+  @apply text-xl font-semibold text-ink mt-8 mb-3;
+}
+.prose-tech p {
+  @apply my-4;
+}
+.prose-tech a {
+  @apply text-accent underline-offset-4 hover:underline;
+}
+.prose-tech ul {
+  @apply list-disc pl-6 my-4 space-y-1;
+}
+.prose-tech ol {
+  @apply list-decimal pl-6 my-4 space-y-1;
+}
+.prose-tech blockquote {
+  @apply border-l-2 border-accent/50 pl-4 italic text-ink-dim my-4;
+}
+.prose-tech code:not(pre code) {
+  @apply font-mono text-sm text-accent bg-bg-soft px-1.5 py-0.5 rounded border border-line;
+}
+.prose-tech pre {
+  @apply rounded-lg border border-line p-4 my-5 overflow-x-auto text-sm;
+}
+.prose-tech img {
+  @apply rounded-lg border border-line my-6;
+}
+.prose-tech strong {
+  @apply text-ink font-semibold;
+}

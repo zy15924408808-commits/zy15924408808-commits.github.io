@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404">
+  <section class="grid-bg flex min-h-[70vh] items-center justify-center px-6">
+    <div class="text-center">
+      <p class="font-mono text-sm text-accent mb-4">$ cd /page</p>
+      <h1 class="text-7xl sm:text-8xl font-bold text-gradient">404</h1>
+      <p class="mt-6 font-mono text-ink-dim">
+        <span class="text-red-400">Error:</span> 页面未找到 — segmentation fault
+      </p>
+      <p class="mt-2 text-ink-faint text-sm">你访问的地址不存在，或已经被移走。</p>
+      <div class="mt-10 flex justify-center gap-4">
+        <a
+          href="/"
+          class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-bg shadow-glow hover:bg-accent-glow transition-colors"
+        >
+          返回首页
+        </a>
+        <a
+          href="/blog"
+          class="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-accent/50 hover:text-accent transition-colors"
+        >
+          去看博客
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

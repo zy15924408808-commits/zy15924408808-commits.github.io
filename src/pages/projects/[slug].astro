@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({
+    params: { slug: p.slug },
+    props: { project: p },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+const { title, description, stack, repo, link } = project.data;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a href="/projects" class="font-mono text-sm text-ink-dim hover:text-accent transition-colors">← 返回项目</a>
+
+    <h1 class="text-3xl sm:text-4xl font-bold mt-6">{title}</h1>
+    <p class="mt-3 text-lg text-ink-dim">{description}</p>
+
+    <div class="mt-5 flex flex-wrap items-center gap-2">
+      {stack.map((s) => (
+        <span class="font-mono text-xs text-accent/80 bg-accent/5 border border-accent/20 rounded px-2 py-0.5">{s}</span>
+      ))}
+    </div>
+
+    {(repo || link) && (
+      <div class="mt-5 flex items-center gap-4 text-sm">
+        {repo && <a href={repo} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline underline-offset-4">代码仓库 ↗</a>}
+        {link && <a href={link} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline underline-offset-4">在线演示 ↗</a>}
+      </div>
+    )}
+
+    <hr class="border-line my-8" />
+
+    <div class="prose-tech">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

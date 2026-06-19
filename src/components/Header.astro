@@ -1,0 +1,33 @@
+---
+import { nav, site } from '../config';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<header class="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-md">
+  <nav class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+    <a href="/" class="group flex items-center gap-2 font-mono text-sm font-semibold">
+      <span class="text-accent">&gt;_</span>
+      <span class="text-ink group-hover:text-accent transition-colors">{site.name}</span>
+    </a>
+    <ul class="flex items-center gap-1 text-sm">
+      {nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              'rounded-md px-3 py-1.5 transition-colors',
+              isActive(item.href)
+                ? 'text-accent bg-accent/10'
+                : 'text-ink-dim hover:text-ink hover:bg-bg-soft',
+            ]}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
