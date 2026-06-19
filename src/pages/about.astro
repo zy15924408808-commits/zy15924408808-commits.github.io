@@ -5,25 +5,31 @@ import { getCollection } from 'astro:content';
 
 // 技能栈 —— 按你的实际情况改这里
 const skills = [
-  { group: '编程语言', items: ['C'] },
+  { group: '编程语言', items: ['C','C++'] },
   { group: 'MCU平台', items: ['STM32', 'ESP32'] },
   { group: '通信协议', items: ['UART', 'SPI', 'I²C'] },
-  { group: '开发工具', items: ['Keil MDK', 'STM32CubeMX', 'Git'] },
+  { group: '开发工具', items: ['Keil MDK', 'STM32CubeMX', 'VS Code', 'VS 2022'] },
   { group: '嵌入式开发', items: ['GPIO', 'PWM', 'Timer', 'EXTI'] },
   { group: 'RTOS', items: ['FreeRTOS'] }
+  { group: 'AI', items: ['ChatGPT', 'CLAUDE CODE'] }
 ];
 
 // 时间线 —— 按你的实际经历改这里
 const timeline = [
   {
+    time: '2026',
+    title: '持续提升',
+    desc: '学习 FreeRTOS、嵌入式 Linux 和项目开发，积累实际工程经验。'
+  },
+  {
     time: '2025 — 至今',
-    title: '深入嵌入式开发',
-    desc: '系统学习 STM32、ESP32，掌握 GPIO、定时器、中断、UART、SPI、I²C 等外设开发，并开始接触 FreeRTOS。'
+    title: 'STM32 开发进阶',
+    desc: '掌握 STM32 外设开发与常用通信协议，实现多个嵌入式实验项目。'
   },
   {
     time: '2024',
-    title: '进入嵌入式领域',
-    desc: '学习 C 语言与数字电路基础，完成 51 单片机入门实验，建立软硬件结合开发思维。'
+    title: '嵌入式启蒙',
+    desc: '学习 C 语言与电子电路基础，开始接触单片机开发。'
   }
 ];
 
