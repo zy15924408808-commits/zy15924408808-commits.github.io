@@ -9,9 +9,9 @@ const categories = groupByCategory(posts);
 
 <BaseLayout title="分类" description="按分类浏览全部文章。">
   <section class="mx-auto max-w-3xl px-6 py-16">
-    <p class="font-mono text-sm text-accent mb-4">$ ls ./blog/</p>
+    <p class="font-mono text-sm text-accent mb-4">$ classify</p>
     <h1 class="text-4xl font-bold mb-3">分类</h1>
-    <p class="text-ink-dim mb-12">文章按文件夹分类。点击查看该分类下的全部文章。</p>
+    <p class="text-ink-dim mb-12">点击查看该分类下的全部文章。</p>
 
     {categories.length === 0 ? (
       <p class="text-ink-dim">还没有文章。在 <code class="font-mono text-accent">src/content/blog/</code> 下建子文件夹（如「嵌入式」）再放文章即可。</p>
