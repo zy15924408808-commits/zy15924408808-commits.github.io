@@ -3,11 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../config';
 
 const channels = [
-  { label: 'Email', value: site.email, href: `mailto:${site.email}`, show: !!site.email },
-  { label: 'GitHub', value: site.social.github.replace(/^https?:\/\//, ''), href: site.social.github, show: !!site.social.github },
-  { label: 'Bilibili', value: site.social.bilibili.replace(/^https?:\/\//, ''), href: site.social.bilibili, show: !!site.social.bilibili },
-  { label: '知乎', value: site.social.zhihu.replace(/^https?:\/\//, ''), href: site.social.zhihu, show: !!site.social.zhihu },
-].filter((c) => c.show);
+  { label: 'Email', value: site.email, href: site.email ? `mailto:${site.email}` : '' },
+  { label: 'GitHub', value: site.social.github, href: site.social.github },
+  { label: 'Bilibili', value: site.social.bilibili, href: site.social.bilibili },
+  { label: '知乎', value: site.social.zhihu, href: site.social.zhihu },
+]
+  .filter((c) => c.href)
+  .map((c) => ({
+    ...c,
+    value: c.value.replace(/^https?:\/\//, ''),
+  }));
 ---
 
 <BaseLayout title="联系" description="通过邮箱或社交账号联系我。">
