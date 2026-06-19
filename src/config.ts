@@ -5,14 +5,13 @@ export const site = {
   // 一句话定位，显示在首页和页脚
   tagline: '嵌入式开发学习者 · 正在路上',
   // 首页副标题
-  intro: '大二在读，专注嵌入式与底层开发。在这里记录我的项目、笔记与成长。',
+  intro: '在校生，专注嵌入式学习。在这里记录我的项目、笔记与成长。',
   // 邮箱
   email: '511442884@qq.com',
   // 社交链接（不需要的留空字符串即可，会自动隐藏）
   social: {
     github: 'https://github.com/zy15924408808-commits',
     bilibili: 'https://space.bilibili.com/1820949289',
-    zhihu: '',
   },
   // 简历 PDF：把文件放进 public/，这里写文件名；留空则「关于」页不显示下载按钮
   resume: '', // 例如 'resume.pdf'
