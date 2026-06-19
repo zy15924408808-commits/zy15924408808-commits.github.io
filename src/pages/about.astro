@@ -22,7 +22,7 @@ const awards = (await getCollection('awards')).sort((a, b) => {
   const oa = a.data.order ?? 999;
   const ob = b.data.order ?? 999;
   if (oa !== ob) return oa - ob;
-  return b.data.date.valueOf() - a.data.date.valueOf();
+  return (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0);
 });
 
 const fmtYM = (d: Date) =>
@@ -121,7 +121,7 @@ const fmtYM = (d: Date) =>
                   )}
                 </div>
                 <p class="mt-2 font-mono text-xs text-ink-faint">
-                  {a.data.issuer && <span>{a.data.issuer} · </span>}{fmtYM(a.data.date)}
+                  {a.data.issuer}{a.data.issuer && a.data.date && <span> · </span>}{a.data.date && fmtYM(a.data.date)}
                 </p>
               </div>
             </div>

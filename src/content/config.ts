@@ -42,8 +42,8 @@ const awards = defineCollection({
     title: z.string(),
     // 颁发方，例如 "中国大学生计算机设计大赛组委会"
     issuer: z.string().optional(),
-    // 获奖时间
-    date: z.coerce.date(),
+    // 获奖时间（可选，有就显示）
+    date: z.coerce.date().optional(),
     // 证书图片文件名，放进 public/certs/，例如 "award1.jpg"
     image: z.string().optional(),
     // 等级/名次，例如 "国家级一等奖"
