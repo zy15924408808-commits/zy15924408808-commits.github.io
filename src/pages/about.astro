@@ -5,16 +5,26 @@ import { getCollection } from 'astro:content';
 
 // 技能栈 —— 按你的实际情况改这里
 const skills = [
-  { group: '编程语言', items: ['C', 'C++', 'Python', '汇编'] },
-  { group: '单片机 / 平台', items: ['STM32', '51 单片机', 'ESP32'] },
-  { group: '系统 / 框架', items: ['FreeRTOS', 'Linux', 'HAL 库'] },
-  { group: '工具', items: ['Keil', 'CubeMX', 'Git', '示波器/逻辑分析仪'] },
+  { group: '编程语言', items: ['C'] },
+  { group: 'MCU平台', items: ['STM32', 'ESP32'] },
+  { group: '通信协议', items: ['UART', 'SPI', 'I²C'] },
+  { group: '开发工具', items: ['Keil MDK', 'STM32CubeMX', 'Git'] },
+  { group: '嵌入式开发', items: ['GPIO', 'PWM', 'Timer', 'EXTI'] },
+  { group: 'RTOS', items: ['FreeRTOS'] }
 ];
 
 // 时间线 —— 按你的实际经历改这里
 const timeline = [
-  { time: '2025 — 至今', title: '大学二年级', desc: '系统学习嵌入式开发，深入单片机与 RTOS。' },
-  { time: '2024', title: '大学一年级', desc: '打下 C 语言与电子电路基础，第一次接触单片机。' },
+  {
+    time: '2025 — 至今',
+    title: '深入嵌入式开发',
+    desc: '系统学习 STM32、ESP32，掌握 GPIO、定时器、中断、UART、SPI、I²C 等外设开发，并开始接触 FreeRTOS。'
+  },
+  {
+    time: '2024',
+    title: '进入嵌入式领域',
+    desc: '学习 C 语言与数字电路基础，完成 51 单片机入门实验，建立软硬件结合开发思维。'
+  }
 ];
 
 // 荣誉证书 —— 从 src/content/awards/ 读取，按 order 再按时间倒序
@@ -36,13 +46,14 @@ const fmtYM = (d: Date) =>
 
     <div class="prose-tech text-lg">
       <p>
-        我是一名大二在读学生，目前正专注于<strong>嵌入式系统开发</strong>的学习，
-        希望未来从事嵌入式相关的工作。我喜欢和硬件打交道，享受代码真实地驱动一颗芯片、
-        点亮一盏灯、转动一个电机的那种掌控感。
+        在校大学生，目前正专注于<strong>嵌入式系统开发</strong>的学习，
+        希望未来从事嵌入式相关的工作。热爱软硬件结合的开发过程，
+		喜欢与各种电子器件和开发板打交道，享受通过代码驱动硬件、解决实际问题带来的成就感。
+		从点亮一盏 LED、读取一个传感器，到实现复杂的通信与控制功能，每一次调试成功都让我对嵌入式技术充满热情。
+		未来希望不断提升自己的技术能力，在嵌入式开发领域持续深耕与成长。
       </p>
       <p>
         这个网站用来记录我的项目、学习笔记和成长轨迹。
-        （这段文字是占位内容，你可以随时替换成自己的介绍。）
       </p>
     </div>
 
