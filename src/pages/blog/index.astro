@@ -22,7 +22,7 @@ const categories = groupByCategory(posts);
     </div>
 
     {posts.length === 0 ? (
-      <p class="text-ink-dim">还没有文章。把 Obsidian 写的 .md 文件放进 <code class="font-mono text-accent">src/content/blog/</code>（可建子文件夹分类）就会出现在这里。</p>
+      <p class="text-ink-dim">还没有文章,尽情创作吧！</p>
     ) : (
       categories.map(([cat, catPosts]) => (
         <div class="mb-12">
