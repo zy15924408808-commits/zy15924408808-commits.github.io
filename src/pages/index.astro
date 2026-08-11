@@ -4,15 +4,14 @@ import { site } from '../config';
 import { getCollection } from 'astro:content';
 import { postUrl, fmtDate } from '../utils/blog';
 
-// 最新 3 篇文章
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+// 获取统计数据
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const allProjects = await getCollection('projects');
 
-// 精选项目
-const projects = (await getCollection('projects'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 2);
+// 获取所有分类和标签
+const categories = [...new Set(allPosts.map(p => p.data.category))];
+const allTags = allPosts.flatMap(p => p.data.tags || []);
+const tags = [...new Set(allTags)];
 ---
 
 <BaseLayout>
@@ -43,46 +42,74 @@ const projects = (await getCollection('projects'))
     </div>
   </section>
 
-  <!-- 精选项目 -->
+  <!-- 网站目录 -->
   <section class="mx-auto max-w-5xl px-6 py-16">
-    <div class="flex items-end justify-between mb-8">
+    <div class="mb-8">
       <h2 class="text-2xl font-bold">
-        <span class="font-mono text-accent text-base mr-2">01.</span>精选项目
+        <span class="font-mono text-accent text-base mr-2">#</span>网站目录
       </h2>
-      <a href="/projects" class="text-sm text-ink-dim hover:text-accent transition-colors">全部 →</a>
     </div>
-    <div class="grid gap-5 sm:grid-cols-2">
-      {projects.map((p) => (
-        <a href={`/projects#${p.slug}`} class="card p-6 block">
-          <h3 class="text-lg font-semibold text-ink">{p.data.title}</h3>
-          <p class="mt-2 text-sm text-ink-dim leading-relaxed">{p.data.description}</p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            {p.data.stack.map((s) => (
-              <span class="font-mono text-xs text-accent/80 bg-accent/5 border border-accent/20 rounded px-2 py-0.5">{s}</span>
-            ))}
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
 
-  <!-- 最新文章 -->
-  <section class="mx-auto max-w-5xl px-6 py-8">
-    <div class="flex items-end justify-between mb-8">
-      <h2 class="text-2xl font-bold">
-        <span class="font-mono text-accent text-base mr-2">02.</span>最新文章
-      </h2>
-      <a href="/blog" class="text-sm text-ink-dim hover:text-accent transition-colors">全部 →</a>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- 博客文章 -->
+      <a href="/blog" class="card p-6 group hover:border-accent/50 transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-2xl">📝</span>
+          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">博客文章</h3>
+        </div>
+        <p class="text-sm text-ink-dim mb-3">技术笔记与学习总结</p>
+        <span class="font-mono text-xs text-accent">{allPosts.length} 篇文章</span>
+      </a>
+
+      <!-- 项目展示 -->
+      <a href="/projects" class="card p-6 group hover:border-accent/50 transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-2xl">🚀</span>
+          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">项目展示</h3>
+        </div>
+        <p class="text-sm text-ink-dim mb-3">个人项目与作品集</p>
+        <span class="font-mono text-xs text-accent">{allProjects.length} 个项目</span>
+      </a>
+
+      <!-- 文章分类 -->
+      <a href="/categories" class="card p-6 group hover:border-accent/50 transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-2xl">📂</span>
+          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">文章分类</h3>
+        </div>
+        <p class="text-sm text-ink-dim mb-3">按主题浏览文章</p>
+        <span class="font-mono text-xs text-accent">{categories.length} 个分类</span>
+      </a>
+
+      <!-- 标签云 -->
+      <a href="/tags" class="card p-6 group hover:border-accent/50 transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-2xl">🏷️</span>
+          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">标签云</h3>
+        </div>
+        <p class="text-sm text-ink-dim mb-3">通过标签查找内容</p>
+        <span class="font-mono text-xs text-accent">{tags.length} 个标签</span>
+      </a>
+
+      <!-- 关于我 -->
+      <a href="/about" class="card p-6 group hover:border-accent/50 transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-2xl">👤</span>
+          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">关于我</h3>
+        </div>
+        <p class="text-sm text-ink-dim mb-3">个人介绍与获奖经历</p>
+        <span class="font-mono text-xs text-accent">了解更多 →</span>
+      </a>
+
+      <!-- 联系方式 -->
+      <a href="/contact" class="card p-6 group hover:border-accent/50 transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-2xl">✉️</span>
+          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">联系我</h3>
+        </div>
+        <p class="text-sm text-ink-dim mb-3">获取联系方式</p>
+        <span class="font-mono text-xs text-accent">保持联系 →</span>
+      </a>
     </div>
-    <ul class="divide-y divide-line">
-      {posts.map((post) => (
-        <li>
-          <a href={postUrl(post)} class="group flex items-baseline justify-between gap-4 py-4">
-            <span class="text-ink group-hover:text-accent transition-colors">{post.data.title}</span>
-            <span class="font-mono text-xs text-ink-faint whitespace-nowrap">{fmtDate(post.data.date)}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
   </section>
 </BaseLayout>
