@@ -1,5 +1,6 @@
 ---
 import { nav, site } from '../config';
+import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) =>
@@ -14,23 +15,26 @@ const isActive = (href: string) =>
     </a>
 
     <!-- 桌面端导航 -->
-    <ul class="hidden md:flex items-center gap-1 text-sm">
-      {nav.map((item) => (
-        <li>
-          <a
-            href={item.href}
-            class:list={[
-              'rounded-md px-3 py-1.5 transition-colors',
-              isActive(item.href)
-                ? 'text-accent bg-accent/10'
-                : 'text-ink-dim hover:text-ink hover:bg-bg-soft',
-            ]}
-          >
-            {item.label}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div class="flex items-center gap-2">
+      <ul class="hidden md:flex items-center gap-1 text-sm">
+        {nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                'rounded-md px-3 py-1.5 transition-colors',
+                isActive(item.href)
+                  ? 'text-accent bg-accent/10'
+                  : 'text-ink-dim hover:text-ink hover:bg-bg-soft',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <ThemeToggle />
+    </div>
 
     <!-- 移动端汉堡按钮 -->
     <button

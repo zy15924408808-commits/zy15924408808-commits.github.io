@@ -4,23 +4,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        // 暗黑科技风配色
+        // 使用CSS变量支持主题切换
         bg: {
-          DEFAULT: '#0a0e14',
-          soft: '#0f1620',
-          card: '#121a26',
+          DEFAULT: 'rgb(var(--bg) / <alpha-value>)',
+          soft: 'rgb(var(--bg-soft) / <alpha-value>)',
+          card: 'rgb(var(--bg-card) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#22d3ee', // 霓虹青
-          green: '#4ade80',
-          glow: '#06b6d4',
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+          green: 'rgb(var(--accent-green) / <alpha-value>)',
+          glow: 'rgb(var(--accent-glow) / <alpha-value>)',
         },
         ink: {
-          DEFAULT: '#e2e8f0',
-          dim: '#94a3b8',
-          faint: '#64748b',
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          dim: 'rgb(var(--ink-dim) / <alpha-value>)',
+          faint: 'rgb(var(--ink-faint) / <alpha-value>)',
         },
-        line: '#1e293b',
+        line: 'rgb(var(--line) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
