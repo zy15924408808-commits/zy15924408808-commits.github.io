@@ -19,17 +19,17 @@
 
 :root.light {
   color-scheme: light;
-  /* 浅色模式配色 */
-  --bg: 255 255 255;
-  --bg-soft: 249 250 251;
-  --bg-card: 243 244 246;
+  /* 米白色浅色模式配色 */
+  --bg: 250 247 242;
+  --bg-soft: 244 240 233;
+  --bg-card: 238 232 220;
   --accent: 6 182 212;
   --accent-green: 34 197 94;
   --accent-glow: 14 165 233;
-  --ink: 15 23 42;
-  --ink-dim: 71 85 105;
-  --ink-faint: 100 116 139;
-  --line: 226 232 240;
+  --ink: 30 27 20;
+  --ink-dim: 80 72 60;
+  --ink-faint: 120 112 96;
+  --line: 210 202 188;
 }
 
 html {
@@ -46,8 +46,8 @@ body {
 
 .light body {
   background-image:
-    radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.08), transparent 40%),
-    radial-gradient(circle at 85% 0%, rgba(34, 197, 94, 0.06), transparent 35%);
+    radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.05), transparent 40%),
+    radial-gradient(circle at 85% 0%, rgba(34, 197, 94, 0.04), transparent 35%);
 }
 
 /* 细网格背景，增强科技感 */
