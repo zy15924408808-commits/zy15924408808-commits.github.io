@@ -15,24 +15,36 @@ const projects = (await getCollection('projects')).sort(
 
     <div class="grid gap-6 sm:grid-cols-2">
       {projects.map((p) => (
-        <article id={p.slug} class="card p-6 flex flex-col scroll-mt-24">
-          <h2 class="text-xl font-semibold text-ink">{p.data.title}</h2>
-          <p class="mt-2 text-sm text-ink-dim leading-relaxed flex-1">{p.data.description}</p>
+        <article id={p.slug} class="card overflow-hidden flex flex-col scroll-mt-24">
+          {p.data.image && (
+            <a href={`/projects/${p.slug}`} class="block">
+              <img
+                src={`/projects/${p.data.image}`}
+                alt={p.data.title}
+                class="w-full aspect-video object-cover hover:opacity-90 transition-opacity"
+                loading="lazy"
+              />
+            </a>
+          )}
+          <div class="p-6 flex flex-col flex-1">
+            <h2 class="text-xl font-semibold text-ink">{p.data.title}</h2>
+            <p class="mt-2 text-sm text-ink-dim leading-relaxed flex-1">{p.data.description}</p>
 
-          <div class="mt-4 flex flex-wrap gap-2">
-            {p.data.stack.map((s) => (
-              <span class="font-mono text-xs text-accent/80 bg-accent/5 border border-accent/20 rounded px-2 py-0.5">{s}</span>
-            ))}
-          </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {p.data.stack.map((s) => (
+                <span class="font-mono text-xs text-accent/80 bg-accent/5 border border-accent/20 rounded px-2 py-0.5">{s}</span>
+              ))}
+            </div>
 
-          <div class="mt-5 flex items-center gap-4 text-sm">
-            <a href={`/projects/${p.slug}`} class="text-accent hover:underline underline-offset-4">查看详情 →</a>
-            {p.data.repo && (
-              <a href={p.data.repo} target="_blank" rel="noopener noreferrer" class="text-ink-dim hover:text-accent transition-colors">代码仓库</a>
-            )}
-            {p.data.link && (
-              <a href={p.data.link} target="_blank" rel="noopener noreferrer" class="text-ink-dim hover:text-accent transition-colors">演示</a>
-            )}
+            <div class="mt-5 flex items-center gap-4 text-sm">
+              <a href={`/projects/${p.slug}`} class="text-accent hover:underline underline-offset-4">查看详情 →</a>
+              {p.data.repo && (
+                <a href={p.data.repo} target="_blank" rel="noopener noreferrer" class="text-ink-dim hover:text-accent transition-colors">代码仓库</a>
+              )}
+              {p.data.link && (
+                <a href={p.data.link} target="_blank" rel="noopener noreferrer" class="text-ink-dim hover:text-accent transition-colors">演示</a>
+              )}
+            </div>
           </div>
         </article>
       ))}

@@ -4,25 +4,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="404">
   <section class="grid-bg flex min-h-[70vh] items-center justify-center px-6">
-    <div class="text-center">
+    <div class="text-center max-w-2xl">
       <p class="font-mono text-sm text-accent mb-4">$ cd /page</p>
       <h1 class="text-7xl sm:text-8xl font-bold text-gradient">404</h1>
       <p class="mt-6 font-mono text-ink-dim">
         <span class="text-red-400">Error:</span> 页面未找到 — segmentation fault
       </p>
       <p class="mt-2 text-ink-faint text-sm">你访问的地址不存在，或已经被移走。</p>
-      <div class="mt-10 flex justify-center gap-4">
-        <a
-          href="/"
-          class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-bg shadow-glow hover:bg-accent-glow transition-colors"
-        >
-          返回首页
+
+      <!-- 快速导航 -->
+      <div class="mt-10 grid gap-3 sm:grid-cols-2 text-left">
+        <a href="/" class="card p-4 group hover:border-accent/50">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🏠</span>
+            <div>
+              <h3 class="text-sm font-semibold text-ink group-hover:text-accent transition-colors">返回首页</h3>
+              <p class="text-xs text-ink-faint mt-0.5">查看网站导航</p>
+            </div>
+          </div>
         </a>
-        <a
-          href="/blog"
-          class="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-accent/50 hover:text-accent transition-colors"
-        >
-          去看博客
+
+        <a href="/blog" class="card p-4 group hover:border-accent/50">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">📝</span>
+            <div>
+              <h3 class="text-sm font-semibold text-ink group-hover:text-accent transition-colors">博客文章</h3>
+              <p class="text-xs text-ink-faint mt-0.5">阅读技术笔记</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/projects" class="card p-4 group hover:border-accent/50">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🚀</span>
+            <div>
+              <h3 class="text-sm font-semibold text-ink group-hover:text-accent transition-colors">项目展示</h3>
+              <p class="text-xs text-ink-faint mt-0.5">查看项目作品</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/about" class="card p-4 group hover:border-accent/50">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">👤</span>
+            <div>
+              <h3 class="text-sm font-semibold text-ink group-hover:text-accent transition-colors">关于我</h3>
+              <p class="text-xs text-ink-faint mt-0.5">了解更多信息</p>
+            </div>
+          </div>
         </a>
       </div>
     </div>

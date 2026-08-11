@@ -28,6 +28,8 @@ const projects = defineCollection({
     order: z.number().default(99),
     // 技术栈标签，例如 [STM32, FreeRTOS, C]
     stack: z.array(z.string()).default([]),
+    // 可选：项目图片文件名，放进 public/projects/，例如 "balance-car.jpg"
+    image: z.string().optional(),
     // 可选：项目链接（GitHub、演示等）
     link: z.string().optional(),
     repo: z.string().optional(),
