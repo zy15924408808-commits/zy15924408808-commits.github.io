@@ -1,0 +1,33 @@
+<!-- 返回顶部按钮 -->
+<button
+  id="back-to-top"
+  class="fixed bottom-8 right-8 z-40 opacity-0 pointer-events-none transition-opacity duration-300 rounded-lg bg-accent p-3 text-bg shadow-glow hover:bg-accent-glow"
+  aria-label="返回顶部"
+>
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+  </svg>
+</button>
+
+<script>
+  const btn = document.getElementById('back-to-top');
+
+  // 监听滚动事件
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      btn?.classList.remove('opacity-0', 'pointer-events-none');
+      btn?.classList.add('opacity-100');
+    } else {
+      btn?.classList.add('opacity-0', 'pointer-events-none');
+      btn?.classList.remove('opacity-100');
+    }
+  });
+
+  // 点击返回顶部
+  btn?.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+</script>
