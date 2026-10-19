@@ -7,9 +7,14 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "admin": "node admin/server.mjs",
+    "test:admin": "node --test admin/tests/*.test.mjs"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "^6.3.11",
+    "js-yaml": "^4.2.0",
+    "mdast-util-from-markdown": "^2.0.0",
     "astro": "^5.5.0",
     "@astrojs/tailwind": "^6.0.0",
     "@astrojs/rss": "^4.0.11",

@@ -1,37 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../config';
+import { site, about } from '../config';
 import { getCollection } from 'astro:content';
 
-// 技能栈 —— 按你的实际情况改这里
-const skills = [
-  { group: '编程语言', items: ['C','C++'] },
-  { group: 'MCU平台', items: ['STM32', 'ESP32'] },
-  { group: '通信协议', items: ['UART', 'SPI', 'I²C'] },
-  { group: '开发工具', items: ['Keil MDK', 'STM32CubeMX', 'VS Code', 'VS 2022'] },
-  { group: '嵌入式开发', items: ['GPIO', 'PWM', 'Timer', 'EXTI'] },
-  { group: 'RTOS', items: ['FreeRTOS'] },
-  { group: 'AI', items: ['ChatGPT', 'CLAUDE CODE'] }
-];
-
-// 时间线 —— 按你的实际经历改这里
-const timeline = [
-  {
-    time: '2026',
-    title: '持续提升',
-    desc: '学习 FreeRTOS、嵌入式 Linux 和项目开发，积累实际工程经验。'
-  },
-  {
-    time: '2025 — 至今',
-    title: 'STM32 开发进阶',
-    desc: '掌握 STM32 外设开发与常用通信协议，实现多个嵌入式实验项目。'
-  },
-  {
-    time: '2024',
-    title: '嵌入式启蒙',
-    desc: '学习 C 语言与电子电路基础，开始接触单片机开发。'
-  }
-];
+const { skills, timeline } = about;
 
 // 荣誉证书 —— 从 src/content/awards/ 读取，按 order 再按时间倒序
 const awards = (await getCollection('awards')).sort((a, b) => {
@@ -51,16 +23,7 @@ const fmtYM = (d: Date) =>
     <h1 class="text-4xl font-bold mb-8">关于我</h1>
 
     <div class="prose-tech text-lg">
-      <p>
-        在校大学生，目前正专注于<strong>嵌入式系统开发</strong>的学习，
-        希望未来从事嵌入式相关的工作。热爱软硬件结合的开发过程，
-		喜欢与各种电子器件和开发板打交道，享受通过代码驱动硬件、解决实际问题带来的成就感。
-		从点亮一盏 LED、读取一个传感器，到实现复杂的通信与控制功能，每一次调试成功都让我对嵌入式技术充满热情。
-		未来希望不断提升自己的技术能力，在嵌入式开发领域持续深耕与成长。
-      </p>
-      <p>
-        这个网站用来记录我的项目、学习笔记和成长轨迹。
-      </p>
+      {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
     </div>
 
     {site.resume && (

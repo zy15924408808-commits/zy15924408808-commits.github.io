@@ -1,0 +1,119 @@
+{
+  "site": {
+    "name": "wind",
+    "tagline": "嵌入式开发学习者 · 正在路上",
+    "intro": "在校生，专注嵌入式学习。在这里记录我的项目、笔记与成长。",
+    "email": "511442884@qq.com",
+    "social": {
+      "github": "https://github.com/zy15924408808-commits",
+      "bilibili": "https://space.bilibili.com/1820949289"
+    },
+    "resume": ""
+  },
+  "giscus": {
+    "repo": "",
+    "repoId": "",
+    "category": "Announcements",
+    "categoryId": ""
+  },
+  "nav": [
+    {
+      "label": "首页",
+      "href": "/"
+    },
+    {
+      "label": "关于",
+      "href": "/about"
+    },
+    {
+      "label": "项目",
+      "href": "/projects"
+    },
+    {
+      "label": "博客",
+      "href": "/blog"
+    },
+    {
+      "label": "联系",
+      "href": "/contact"
+    }
+  ],
+  "about": {
+    "paragraphs": [
+      "在校大学生，目前正专注于嵌入式系统开发的学习， 希望未来从事嵌入式相关的工作。热爱软硬件结合的开发过程， 喜欢与各种电子器件和开发板打交道，享受通过代码驱动硬件、解决实际问题带来的成就感。 从点亮一盏 LED、读取一个传感器，到实现复杂的通信与控制功能，每一次调试成功都让我对嵌入式技术充满热情。 未来希望不断提升自己的技术能力，在嵌入式开发领域持续深耕与成长。",
+      "这个网站用来记录我的项目、学习笔记和成长轨迹。"
+    ],
+    "skills": [
+      {
+        "group": "编程语言",
+        "items": [
+          "C",
+          "C++"
+        ]
+      },
+      {
+        "group": "MCU平台",
+        "items": [
+          "STM32",
+          "ESP32"
+        ]
+      },
+      {
+        "group": "通信协议",
+        "items": [
+          "UART",
+          "SPI",
+          "I²C"
+        ]
+      },
+      {
+        "group": "开发工具",
+        "items": [
+          "Keil MDK",
+          "STM32CubeMX",
+          "VS Code",
+          "VS 2022"
+        ]
+      },
+      {
+        "group": "嵌入式开发",
+        "items": [
+          "GPIO",
+          "PWM",
+          "Timer",
+          "EXTI"
+        ]
+      },
+      {
+        "group": "RTOS",
+        "items": [
+          "FreeRTOS"
+        ]
+      },
+      {
+        "group": "AI",
+        "items": [
+          "ChatGPT",
+          "CLAUDE CODE"
+        ]
+      }
+    ],
+    "timeline": [
+      {
+        "time": "2026",
+        "title": "持续提升",
+        "desc": "学习 FreeRTOS、嵌入式 Linux 和项目开发，积累实际工程经验。"
+      },
+      {
+        "time": "2025 — 至今",
+        "title": "STM32 开发进阶",
+        "desc": "掌握 STM32 外设开发与常用通信协议，实现多个嵌入式实验项目。"
+      },
+      {
+        "time": "2024",
+        "title": "嵌入式启蒙",
+        "desc": "学习 C 语言与电子电路基础，开始接触单片机开发。"
+      }
+    ]
+  }
+}
