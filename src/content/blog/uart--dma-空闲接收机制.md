@@ -7,7 +7,7 @@ tags:
   - 串口
   - dma
 description: ''
-draft: true
+draft: false
 category: 单片机
 ---
 ## 1. 解决什么问题？

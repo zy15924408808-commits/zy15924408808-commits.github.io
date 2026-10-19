@@ -160,13 +160,14 @@ async function renderMarkdown() {
 }
 function insertText(text) { const editor = $('#markdown-body'); editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end'); editor.dispatchEvent(new Event('input',{bubbles:true})); editor.focus(); }
 function selectFile(accept) { return new Promise(resolve => { const input = document.createElement('input'); input.type = 'file'; input.accept = accept; input.onchange = () => resolve(input.files[0]); input.oncancel = () => resolve(null); input.click(); }); }
-function importDialog() {
+function importDialog(el) {
   if (!unsaved()) return;
-  importDraft = null;
+  const collection = el?.dataset.collection || 'blog';
+  importDraft = {collection};
   showDialog(`<h2>导入电脑文章</h2><p>选择电脑里的 Markdown 文章，自动识别标题、日期、标签和正文，保存到网站作为草稿。原文件保持不变，同名文章会自动另存。</p><div class="stack"><label class="field"><span class="field-label">选择文章（.md，UTF-8，最多 2 MB）</span><input id="import-markdown" type="file" accept=".md,text/markdown"></label><div id="import-summary" class="notice" hidden></div><div id="import-images" hidden><p class="form-note">文章含本地图片，请选择配图，或选择包含这些图片的文件夹（含子文件夹）。只会导入正文引用到的图片。</p><div class="import-pickers"><label class="field"><span class="field-label">选择配图（可多选）</span><input id="import-image-files" type="file" multiple accept=".png,.jpg,.jpeg,.gif,.webp,.avif"></label><label class="field"><span class="field-label">或选择附件文件夹</span><input id="import-image-folder" type="file" webkitdirectory multiple></label></div><p id="import-image-status" class="form-note">尚未选择配图。</p><label class="checkbox-label"><input id="import-allow-missing" type="checkbox">缺失图片稍后补充</label></div><div id="import-error" class="notice error" role="alert" hidden></div></div><p class="form-note">导入后可继续编辑，取消草稿并保存后，前往「发布与同步」一键发布到 GitHub。</p><div class="dialog-actions">${button('取消','close-dialog','','ghost')}${button('导入并保存','do-import','upload','primary','id="import-confirm" disabled')}</div>`);
 }
 async function prepareSelectedArticle(file) {
-  const draft = importDraft = {file,files:new Map()};
+  const draft = importDraft = {collection:importDraft?.collection || 'blog',file,files:new Map()};
   $('#import-confirm').disabled = true; $('#import-summary').hidden = true; $('#import-error').hidden = true; $('#import-images').hidden = true;
   for (const id of ['import-image-files','import-image-folder']) $(`#${id}`).value = '';
   $('#import-allow-missing').checked = false; $('#import-image-status').textContent = '尚未选择配图。';
@@ -177,11 +178,11 @@ async function prepareSelectedArticle(file) {
     let text;
     try { text = new TextDecoder('utf-8',{fatal:true}).decode(await file.arrayBuffer()); }
     catch { throw new Error('无法按 UTF-8 读取文章，请在原编辑器中另存为 UTF-8 编码后导入。'); }
-    draft.input = {name:file.name,text,date:date.toISOString().slice(0,10)};
+    draft.input = {collection:draft.collection,name:file.name,text,date:date.toISOString().slice(0,10)};
     draft.prepared = await post('import/prepare',draft.input);
     if (importDraft !== draft || !$('#import-summary')) return;
     const p = draft.prepared;
-    $('#import-summary').innerHTML = `<strong>${esc(p.data.title)}</strong><br>日期：${esc(p.data.date)} · 自动保存为：${esc(p.path)}<br>状态：草稿${p.references.length ? `<br>本地图片引用：${p.references.length} 处<div class="import-refs">${p.references.map(ref => `<div>${esc(ref)}</div>`).join('')}</div>` : '<br>没有需要导入的本地图片。'}${p.notes.length ? `<br>${p.notes.map(esc).join('<br>')}` : ''}`;
+    $('#import-summary').innerHTML = `<strong>${esc(p.data.title)}</strong><br>${p.collection === 'blog' ? `日期：${esc(p.data.date)} · ` : `项目简介：${esc(p.data.description)}<br>`}自动保存为：${esc(p.path)}<br>状态：${p.collection === 'blog' ? '草稿（推送后仍隐藏，需取消草稿并保存）' : '待发布（推送后展示）'}${p.references.length ? `<br>本地图片引用：${p.references.length} 处<div class="import-refs">${p.references.map(ref => `<div>${esc(ref)}</div>`).join('')}</div>` : '<br>没有需要导入的本地图片。'}${p.notes.length ? `<br>${p.notes.map(esc).join('<br>')}` : ''}`;
     $('#import-summary').hidden = false; $('#import-images').hidden = !p.references.length; $('#import-confirm').disabled = false;
   } catch (error) { if (importDraft === draft && $('#import-error')) { $('#import-error').textContent = error.message; $('#import-error').hidden = false; } }
 }
@@ -211,9 +212,9 @@ async function completeImport() {
     const payload = {...draft.input,assets,allowMissing:$('#import-allow-missing').checked};
     if (new Blob([JSON.stringify(payload)]).size > 15*1024*1024) throw new Error('文章和图片总大小超过导入限制，请压缩图片后重试。');
     const result = await post('import',payload);
-    $('#modal').close(); importDraft = null; dirty(false); await reload(); await openEditor('blog',result.path);
+    $('#modal').close(); importDraft = null; dirty(false); await reload(); await openEditor(result.collection,result.path);
     if (result.missing.length) $('#editor-form').insertAdjacentHTML('afterbegin',`<div class="notice warning">文章已导入，以下图片需要补充：${result.missing.map(esc).join('、')}。可以使用正文工具栏的「上传图片」替换原链接。</div>`);
-    toast(`已导入文章和 ${result.images} 张图片，保存为草稿。`);
+    toast(`已导入${result.collection === 'projects' ? '项目' : '文章'}和 ${result.images} 张图片${result.collection === 'blog' ? '，保存为草稿' : '，可检查后发布'}。`);
   } catch (error) { $('#import-error').textContent = error.message; $('#import-error').hidden = false; }
   finally { controls.forEach(el => { if (el.isConnected) el.disabled = false; }); }
 }

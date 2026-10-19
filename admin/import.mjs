@@ -45,6 +45,8 @@ export function imageReferences(body) {
 }
 
 export async function prepareImport(store, input) {
+  const collection = input?.collection ?? 'blog';
+  if (!['blog', 'projects'].includes(collection)) throw new AdminError('只支持导入博客文章或项目介绍。');
   if (!input || typeof input.name !== 'string' || !/\.md$/i.test(input.name) || filename(input.name) !== input.name) throw new AdminError('请选择一个 .md 格式的 Markdown 文章。');
   if (typeof input.text !== 'string' || input.text.length > 2_000_000 || input.text.includes('\0')) throw new AdminError('文章内容无效或超过 2 MB，请使用 UTF-8 编码的 Markdown 文件。');
   let body = input.text.replace(/^\uFEFF/, ''), data = {}, notes = [];
@@ -59,24 +61,40 @@ export async function prepareImport(store, input) {
   let heading;
   visit(fromMarkdown(body), 'heading', node => { if (!heading && node.depth === 1) heading = plain(node); });
   data.title = typeof data.title === 'string' && data.title.trim() ? data.title.trim() : heading || input.name.slice(0, -3);
-  const today = /^\d{4}-\d{2}-\d{2}$/.test(input.date || '') ? input.date : new Date().toISOString().slice(0,10);
-  if (typeof data.date === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data.date)) data.date = data.date.slice(0,10);
-  else { data.date = today; notes.push('原文没有有效日期，使用所选文件的修改日期。'); }
-  if (typeof data.tags === 'string') data.tags = data.tags.split(/[,，\s]+/).filter(Boolean);
-  if (data.tags == null) data.tags = [];
-  if (data.description == null) data.description = '';
-  if (data.category == null) delete data.category;
-  data.draft = true;
+  if (collection === 'blog') {
+    const today = /^\d{4}-\d{2}-\d{2}$/.test(input.date || '') ? input.date : new Date().toISOString().slice(0,10);
+    if (typeof data.date === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data.date)) data.date = data.date.slice(0,10);
+    else { data.date = today; notes.push('原文没有有效日期，使用所选文件的修改日期。'); }
+    if (typeof data.tags === 'string') data.tags = data.tags.split(/[,，\s]+/).filter(Boolean);
+    if (data.tags == null) data.tags = [];
+    if (data.description == null) data.description = '';
+    if (data.category == null) delete data.category;
+    data.draft = true;
+  } else {
+    delete data.draft;
+    if (data.stack == null) data.stack = data.tags ?? [];
+    if (typeof data.stack === 'string') data.stack = data.stack.split(/[,，\n]+/).map(item => item.trim()).filter(Boolean);
+    if (data.order == null) data.order = 99;
+    if (!data.description) {
+      let paragraph;
+      visit(fromMarkdown(body), 'paragraph', node => { const text = plain(node).trim(); if (!paragraph && text) paragraph = text; });
+      data.description = (paragraph || data.title).slice(0,240);
+      notes.push('已从正文生成项目简介，可以在导入后修改。');
+    }
+    if (data.image != null && typeof data.image !== 'string') throw new AdminError('项目封面应为图片路径。');
+  }
   if ('slug' in data) { delete data.slug; notes.push('使用新文件名生成网址，保留原文章。'); }
-  validateContent('blog', data);
-  const entries = await store.listContent('blog');
+  // 本地封面路径会在复制图片后转换成网站文件名。
+  validateContent(collection, collection === 'projects' ? {...data,image:undefined} : data);
+  const entries = await store.listContent(collection);
   const occupied = new Set(entries.map(entry => slug(entry.path)));
   const base = slug(input.name.replace(/\.md$/i, '.md')).slice(0,100) || 'imported-article';
   let name = base, count = 2;
   while (occupied.has(name)) name = `${base}-${count++}`;
   const destination = `${name}.md`; relativeName(destination, '.md');
   const references = imageReferences(body);
-  return {data, body, path:destination, notes, references};
+  if (collection === 'projects' && data.image) references.push({url:data.image,cover:true});
+  return {collection, data, body, path:destination, notes, references};
 }
 
 function assetMatch(url, assets) {
@@ -91,6 +109,7 @@ function assetMatch(url, assets) {
 
 export async function importArticle(store, input) {
   const prepared = await prepareImport(store, input);
+  const bucket = prepared.collection === 'projects' ? 'projects' : 'blog-assets';
   if (!Array.isArray(input.assets) || input.assets.length > 300) throw new AdminError('附件数量无效，每次最多导入 300 张图片。');
   const assets = input.assets.map(asset => {
     if (!asset || typeof asset.path !== 'string' || asset.path.length > 1200 || /[\0-\x1f]/.test(asset.path)) throw new AdminError('附件文件名不合法。');
@@ -99,8 +118,15 @@ export async function importArticle(store, input) {
   if (new Set(assets.map(a => a.path)).size !== assets.length) throw new AdminError('附件路径重复，请重新选择图片。');
   const needed = new Map(), missing = [], replacements = [];
   for (const ref of prepared.references) {
+    if (ref.cover) {
+      const name = decoded(ref.url.replace(/^\/projects\//, ''));
+      try {
+        relativeName(name);
+        if (!name.includes('/') && imageType.test(name) && (await fs.stat(await safePath(store.root,'public/projects/' + name))).isFile()) { prepared.data.image = name; continue; }
+      } catch {}
+    }
     // 网站中已有的素材可直接继续使用。
-    if (/^\/(?!\/)/.test(ref.url)) {
+    if (!ref.cover && /^\/(?!\/)/.test(ref.url)) {
       const name = decoded(ref.url.split(/[?#]/)[0].slice(1));
       try { relativeName(name); if (imageType.test(name) && (await fs.stat(await safePath(store.root, 'public/' + name))).isFile()) continue; } catch {}
     }
@@ -108,7 +134,7 @@ export async function importArticle(store, input) {
     if (!asset || !imageType.test(asset.path)) { missing.push(ref.url); continue; }
     if (!needed.has(asset.path)) {
       // 验证所有需要的图片后才开始落盘，避免错误附件产生半篇文章。
-      const bytes = decodeUpload({bucket:'blog-assets', name:filename(asset.path), base64:asset.base64});
+      const bytes = decodeUpload({bucket, name:filename(asset.path), base64:asset.base64});
       needed.set(asset.path, {asset, bytes});
     }
     replacements.push({...ref, assetPath:asset.path});
@@ -118,13 +144,16 @@ export async function importArticle(store, input) {
   const created = [], urls = new Map();
   try {
     for (const [key, {asset, bytes}] of needed) {
-      const saved = await store.upload({bucket:'blog-assets',name:filename(asset.path),base64:asset.base64});
-      created.push({relative:`public/blog-assets/${saved.name}`, version:hash(bytes)}); urls.set(key, saved.url);
+      const saved = await store.upload({bucket,name:filename(asset.path),base64:asset.base64});
+      created.push({relative:`public/${bucket}/${saved.name}`, version:hash(bytes)}); urls.set(key, saved.url);
     }
     let body = prepared.body;
-    for (const ref of replacements.sort((a,b) => b.start - a.start)) body = body.slice(0,ref.start) + ref.replacement(urls.get(ref.assetPath)) + body.slice(ref.end);
-    await store.writeContent({collection:'blog',path:prepared.path,data:prepared.data,body,version:null});
-    return {path:prepared.path,title:prepared.data.title,images:needed.size,missing:uniqueMissing};
+    for (const ref of replacements.filter(ref => !ref.cover).sort((a,b) => b.start - a.start)) body = body.slice(0,ref.start) + ref.replacement(urls.get(ref.assetPath)) + body.slice(ref.end);
+    const cover = replacements.find(ref => ref.cover);
+    if (cover) prepared.data.image = filename(decoded(urls.get(cover.assetPath)));
+    else if (prepared.references.some(ref => ref.cover && uniqueMissing.includes(ref.url))) delete prepared.data.image;
+    await store.writeContent({collection:prepared.collection,path:prepared.path,data:prepared.data,body,version:null});
+    return {collection:prepared.collection,path:prepared.path,title:prepared.data.title,images:needed.size,missing:uniqueMissing};
   } catch (error) {
     for (const item of created) {
       const target = await safePath(store.root,item.relative);
