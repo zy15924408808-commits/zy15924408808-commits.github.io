@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string;
+  image?: string;
+  stack: string[];
+  index: number;
+}
+const { title, image, stack, index } = Astro.props;
+---
+<div class="project-preview-art">
+  {image ? <img src={`/projects/${image}`} alt={title} loading="lazy" /> : (
+    <div class="project-placeholder" aria-hidden="true">
+      <span class="project-art-code">{String(index + 1).padStart(2, '0')}</span>
+      <svg viewBox="0 0 320 150" fill="none"><path d="M0 75h75l25-30h35m50 30h45l25 30h65M155 0v30m0 90v30M0 110h45l15-15h30M230 45h30l15-15h45" /><rect x="115" y="35" width="80" height="80" rx="10" /><rect x="130" y="50" width="50" height="50" rx="5" /><path d="M103 55h12m-12 20h12m-12 20h12m80-40h12m-12 20h12m-12 20h12m-72-72v12m20-12v12m20-12v12m-40 80v12m20-12v12m20-12v12" /></svg>
+      <span class="project-art-label">{stack.slice(0, 3).join(' / ') || 'PROJECT NOTES'}</span>
+    </div>
+  )}
+  <span class="project-corner-arrow" aria-hidden="true">↗</span>
+</div>

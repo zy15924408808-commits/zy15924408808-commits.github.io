@@ -10,24 +10,26 @@
 </button>
 
 <script>
-  const btn = document.getElementById('back-to-top');
-
-  // 监听滚动事件
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-      btn?.classList.remove('opacity-0', 'pointer-events-none');
-      btn?.classList.add('opacity-100');
-    } else {
-      btn?.classList.add('opacity-0', 'pointer-events-none');
-      btn?.classList.remove('opacity-100');
-    }
-  });
-
-  // 点击返回顶部
-  btn?.addEventListener('click', () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+  let cleanupScroll: (() => void) | undefined;
+  document.addEventListener('astro:page-load', () => {
+    cleanupScroll?.();
+    const btn = document.getElementById('back-to-top');
+    const update = () => {
+      const visible = window.scrollY > 300;
+      btn?.classList.toggle('opacity-0', !visible);
+      btn?.classList.toggle('pointer-events-none', !visible);
+      btn?.classList.toggle('opacity-100', visible);
+      btn?.setAttribute('tabindex', visible ? '0' : '-1');
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    cleanupScroll = () => window.removeEventListener('scroll', update);
+    update();
+    btn?.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+      });
     });
   });
+  document.addEventListener('astro:before-swap', () => cleanupScroll?.());
 </script>

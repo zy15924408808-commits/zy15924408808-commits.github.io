@@ -5,31 +5,31 @@
 :root {
   color-scheme: dark;
   /* 深色模式配色 */
-  --bg: 10 14 20;
-  --bg-soft: 15 22 32;
-  --bg-card: 18 26 38;
-  --accent: 34 211 238;
-  --accent-green: 74 222 128;
-  --accent-glow: 6 182 212;
-  --ink: 226 232 240;
-  --ink-dim: 148 163 184;
-  --ink-faint: 100 116 139;
-  --line: 30 41 59;
+  --bg: 12 15 18;
+  --bg-soft: 19 24 29;
+  --bg-card: 21 27 32;
+  --accent: 89 224 207;
+  --accent-green: 175 226 140;
+  --accent-glow: 49 196 183;
+  --ink: 232 239 241;
+  --ink-dim: 154 171 179;
+  --ink-faint: 123 144 155;
+  --line: 41 54 62;
 }
 
 :root.light {
   color-scheme: light;
-  /* 深米色浅色模式配色 - 更暗更柔和 */
-  --bg: 235 228 215;
-  --bg-soft: 225 218 202;
-  --bg-card: 215 206 188;
-  --accent: 6 182 212;
-  --accent-green: 34 197 94;
-  --accent-glow: 14 165 233;
-  --ink: 40 35 28;
-  --ink-dim: 90 82 68;
-  --ink-faint: 125 115 98;
-  --line: 200 190 172;
+  /* 浅色模式：冷白底色与深青色强调 */
+  --bg: 246 248 250;
+  --bg-soft: 235 240 243;
+  --bg-card: 255 255 255;
+  --accent: 12 114 106;
+  --accent-green: 63 117 36;
+  --accent-glow: 16 133 122;
+  --ink: 24 40 48;
+  --ink-dim: 77 98 110;
+  --ink-faint: 94 115 127;
+  --line: 205 216 224;
 }
 
 html {
@@ -38,38 +38,17 @@ html {
 
 body {
   @apply bg-bg text-ink font-sans antialiased;
-  background-image:
-    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.06), transparent 40%),
-    radial-gradient(circle at 85% 0%, rgba(74, 222, 128, 0.05), transparent 35%);
-  background-attachment: fixed;
-}
-
-.light body {
-  background-image:
-    radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.04), transparent 40%),
-    radial-gradient(circle at 85% 0%, rgba(34, 197, 94, 0.03), transparent 35%);
-}
-
-/* 细网格背景，增强科技感 */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(34, 211, 238, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.035) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
 /* 渐变文字 */
 .text-gradient {
   @apply bg-clip-text text-transparent;
-  background-image: linear-gradient(135deg, #22d3ee 0%, #4ade80 100%);
+  background-image: linear-gradient(110deg, rgb(var(--accent)), rgb(var(--accent-green)));
 }
 
-/* 卡片悬停微光 */
+/* 卡片基础样式，交互效果见 experience.css */
 .card {
-  @apply rounded-xl border border-line bg-bg-card/60 backdrop-blur-sm transition-all duration-300;
-}
-.card:hover {
-  @apply border-accent/40 shadow-glow-sm -translate-y-0.5;
+  @apply border border-line;
 }
 
 /* 文章正文排版 */

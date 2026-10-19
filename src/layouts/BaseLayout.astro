@@ -6,6 +6,7 @@ import BackToTop from '../components/BackToTop.astro';
 import CodeCopy from '../components/CodeCopy.astro';
 import { site } from '../config';
 import '../styles/global.css';
+import '../styles/experience.css';
 
 interface Props {
   title?: string;
@@ -49,5 +50,52 @@ const pageDesc = description ?? site.intro;
     <Footer />
     <BackToTop />
     <CodeCopy />
+    <script>
+      let observer: IntersectionObserver | undefined;
+      function initMotion() {
+        observer?.disconnect();
+        const paused = sessionStorage.getItem('motion-paused') === 'true';
+        document.documentElement.classList.toggle('motion-paused', paused);
+        const toggle = document.querySelector<HTMLButtonElement>('[data-motion-toggle]');
+        const syncToggle = () => {
+          if (!toggle) return;
+          const isPaused = document.documentElement.classList.contains('motion-paused');
+          toggle.setAttribute('aria-pressed', String(isPaused));
+          toggle.textContent = isPaused ? '开启动效' : '暂停动效';
+          toggle.title = isPaused ? '开启电路及光标动画' : '暂停电路及光标动画';
+        };
+        syncToggle();
+        toggle?.addEventListener('click', () => {
+          const isPaused = document.documentElement.classList.toggle('motion-paused');
+          sessionStorage.setItem('motion-paused', String(isPaused));
+          syncToggle();
+        });
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+        observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.remove('reveal-pending');
+            observer?.unobserve(entry.target);
+          });
+        }, { threshold: 0.05 });
+        document.querySelectorAll('[data-reveal], main .card').forEach((item, index) => {
+          if (!(item instanceof HTMLElement)) return;
+          item.style.setProperty('--reveal-delay', `${Math.min(index % 4, 3) * 65}ms`);
+          item.classList.add('reveal-pending');
+          observer?.observe(item);
+        });
+      }
+      document.addEventListener('astro:page-load', initMotion);
+      document.addEventListener('astro:before-swap', () => observer?.disconnect());
+      document.addEventListener('astro:before-swap', (event) => {
+        event.newDocument.documentElement.classList.toggle('light', document.documentElement.classList.contains('light'));
+      });
+      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+        if (event.matches) {
+          observer?.disconnect();
+          document.querySelectorAll('.reveal-pending').forEach(item => item.classList.remove('reveal-pending'));
+        }
+      });
+    </script>
   </body>
 </html>

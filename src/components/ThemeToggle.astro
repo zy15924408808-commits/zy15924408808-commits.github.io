@@ -31,6 +31,5 @@
   }
 
   // 首次加载和每次页面导航后都重新绑定
-  bindToggle();
-  document.addEventListener('astro:after-swap', bindToggle);
+  document.addEventListener('astro:page-load', bindToggle);
 </script>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectArtwork from '../../components/ProjectArtwork.astro';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects')).sort(
@@ -8,24 +9,17 @@ const projects = (await getCollection('projects')).sort(
 ---
 
 <BaseLayout title="项目" description="我做过的嵌入式项目与作品。">
-  <section class="mx-auto max-w-5xl px-6 py-16">
-    <p class="font-mono text-sm text-accent mb-4">$ Project Work</p>
-    <h1 class="text-4xl font-bold mb-3">项目作品</h1>
-    <p class="text-ink-dim mb-12">这里展示我做过的一些项目。点击可查看详情。</p>
+  <section class="site-container py-16">
+    <div class="page-intro" data-reveal>
+      <p class="eyebrow">THE PROJECT ARCHIVE / {String(projects.length).padStart(2, '0')}</p>
+      <h1>把想法，变成现实<span class="heading-dot">.</span></h1>
+      <p>从一盏 LED 到一个完整系统，记录每一次动手实践。</p>
+    </div>
 
     <div class="grid gap-6 sm:grid-cols-2">
-      {projects.map((p) => (
+      {projects.map((p, i) => (
         <article id={p.slug} class="card overflow-hidden flex flex-col scroll-mt-24">
-          {p.data.image && (
-            <a href={`/projects/${p.slug}`} class="block">
-              <img
-                src={`/projects/${p.data.image}`}
-                alt={p.data.title}
-                class="w-full aspect-video object-cover hover:opacity-90 transition-opacity"
-                loading="lazy"
-              />
-            </a>
-          )}
+          <a href={`/projects/${p.slug}`} aria-label={`查看项目：${p.data.title}`}><ProjectArtwork title={p.data.title} image={p.data.image} stack={p.data.stack} index={i} /></a>
           <div class="p-6 flex flex-col flex-1">
             <h2 class="text-xl font-semibold text-ink">{p.data.title}</h2>
             <p class="mt-2 text-sm text-ink-dim leading-relaxed flex-1">{p.data.description}</p>
@@ -49,5 +43,6 @@ const projects = (await getCollection('projects')).sort(
         </article>
       ))}
     </div>
+    {projects.length === 0 && <p class="empty-notes">项目正在积累中，新的作品即将到来。</p>}
   </section>
 </BaseLayout>

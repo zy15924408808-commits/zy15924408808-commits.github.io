@@ -1,156 +1,104 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../config';
+import CircuitBoard from '../components/CircuitBoard.astro';
+import ProjectArtwork from '../components/ProjectArtwork.astro';
+import { site, about } from '../config';
 import { getCollection } from 'astro:content';
 import { postUrl, fmtDate } from '../utils/blog';
 
-// 获取统计数据
-const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-const allProjects = await getCollection('projects');
-
-// 获取所有分类和标签
-const categories = [...new Set(allPosts.map(p => p.data.category))];
-const allTags = allPosts.flatMap(p => p.data.tags || []);
-const tags = [...new Set(allTags)];
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const skills = [...new Set(about.skills.flatMap(group => group.items))].slice(0, 8);
 ---
 
 <BaseLayout>
-  <!-- Hero -->
-  <section class="grid-bg relative border-b border-line">
-    <div class="mx-auto max-w-5xl px-6 py-28 sm:py-36">
-      <p class="font-mono text-sm text-accent mb-4">$ {site.name}</p>
-      <h1 class="text-4xl sm:text-6xl font-bold leading-tight">
-        你好，我是 <span class="text-gradient">{site.name}</span>
-      </h1>
-      <p class="mt-6 max-w-2xl text-lg text-ink-dim leading-relaxed">
-        {site.intro}
-      </p>
-      <div class="mt-10 flex flex-wrap gap-4">
-        <a
-          href="/projects"
-          class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-bg shadow-glow hover:bg-accent-glow transition-colors"
-        >
-          项目合集
-        </a>
-        <a
-          href="/blog"
-          class="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-accent/50 hover:text-accent transition-colors"
-        >
-          博客笔记
-        </a>
+  <section class="home-hero">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="site-container hero-layout">
+      <div class="hero-copy">
+        <p class="eyebrow" data-reveal><span class="status-dot"></span> PERSONAL SPACE / {site.name.toUpperCase()}</p>
+        <h1 data-reveal>你好，我是 <span class="hero-name">{site.name}<span class="terminal-cursor" aria-hidden="true">_</span></span></h1>
+        <p class="hero-tagline" data-reveal>{site.tagline}</p>
+        <p class="hero-description" data-reveal>{site.intro}</p>
+        <div class="hero-actions" data-reveal>
+          <a href="/projects" class="button button-primary">探索项目 <span aria-hidden="true">↗</span></a>
+          <a href="/blog" class="button button-secondary">阅读笔记 <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="hero-social" data-reveal>
+          <span class="social-caption">在这里找到我</span>
+          {site.social.github && <a href={site.social.github} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>}
+          {site.social.bilibili && <a href={site.social.bilibili} target="_blank" rel="noopener noreferrer">Bilibili <span aria-hidden="true">↗</span></a>}
+          {site.email && <a href={`mailto:${site.email}`}>Email <span aria-hidden="true">↗</span></a>}
+        </div>
       </div>
-
-      <!-- 社交链接 -->
-      <div class="mt-8 flex items-center gap-4">
-        {site.social.github && (
-          <a
-            href={site.social.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-ink-dim hover:text-accent transition-colors"
-            aria-label="GitHub"
-          >
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-          </a>
-        )}
-        {site.social.bilibili && (
-          <a
-            href={site.social.bilibili}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-ink-dim hover:text-accent transition-colors"
-            aria-label="Bilibili"
-          >
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373Z"/>
-            </svg>
-          </a>
-        )}
-        {site.email && (
-          <a
-            href={`mailto:${site.email}`}
-            class="text-ink-dim hover:text-accent transition-colors"
-            aria-label="Email"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-          </a>
-        )}
+      <div class="hero-visual" data-reveal><CircuitBoard /></div>
+      <div class="hero-bottom" data-reveal>
+        <p><span class="tiny-cross" aria-hidden="true">+</span> 把想法写进代码，让代码连接现实。</p>
+        <a href="#explore" class="scroll-cue">继续探索 <span aria-hidden="true">↓</span></a>
       </div>
     </div>
   </section>
 
-  <!-- 网站目录 -->
-  <section class="mx-auto max-w-5xl px-6 py-16">
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold">
-        <span class="font-mono text-accent text-base mr-2">#</span>网站目录
-      </h2>
+  <div class="skill-ribbon">
+    <div class="site-container skill-ribbon-inner">
+      <span class="ribbon-label">LEARNING & BUILDING</span>
+      <div class="ribbon-skills">{skills.map(skill => <span>{skill}</span>)}</div>
     </div>
+  </div>
 
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- 博客文章 -->
-      <a href="/blog" class="card p-6 group hover:border-accent/50 transition-colors">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="text-2xl">📝</span>
-          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">博客文章</h3>
-        </div>
-        <p class="text-sm text-ink-dim mb-3">技术笔记与学习总结</p>
-        <span class="font-mono text-xs text-accent">{allPosts.length} 篇文章</span>
-      </a>
+  <section id="explore" class="site-container home-section">
+    <div class="section-heading" data-reveal>
+      <div><p class="eyebrow">01 / SELECTED WORK</p><h2>从想法，到作品<span class="heading-dot">.</span></h2></div>
+      <a href="/projects" class="text-link">全部项目 <span aria-hidden="true">↗</span></a>
+    </div>
+    {projects.length > 0 ? (
+      <div class="home-projects">
+        {projects.slice(0, 2).map((project, i) => (
+          <a href={`/projects/${project.slug}`} class="card project-preview" data-reveal>
+            <ProjectArtwork title={project.data.title} image={project.data.image} stack={project.data.stack} index={i} />
+            <div class="project-preview-body">
+              <div class="project-meta"><span>PROJECT / {String(i + 1).padStart(2, '0')}</span><span aria-hidden="true">⌁</span></div>
+              <h3>{project.data.title}</h3>
+              <p>{project.data.description}</p>
+              <div class="tag-list">{project.data.stack.slice(0, 5).map(skill => <span class="tech-tag">{skill}</span>)}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : <a class="card empty-project" data-reveal href="/projects"><span class="eyebrow">WORK IN PROGRESS</span><h3>项目正在积累中</h3><p>记录每一次实践，让想法慢慢成形。<span aria-hidden="true">↗</span></p></a>}
+  </section>
 
-      <!-- 项目展示 -->
-      <a href="/projects" class="card p-6 group hover:border-accent/50 transition-colors">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="text-2xl">🚀</span>
-          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">项目展示</h3>
-        </div>
-        <p class="text-sm text-ink-dim mb-3">个人项目与作品集</p>
-        <span class="font-mono text-xs text-accent">{allProjects.length} 个项目</span>
-      </a>
+  <section class="site-container home-section notes-section">
+    <div class="section-heading" data-reveal>
+      <div><p class="eyebrow">02 / FIELD NOTES</p><h2>记录每一次探索<span class="heading-dot">.</span></h2></div>
+      <a href="/blog" class="text-link">全部文章 <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="home-notes">
+      <div class="notes-aside" data-reveal>
+        <span class="notes-symbol" aria-hidden="true">&lt;/&gt;</span>
+        <h3>边学习，边记录。</h3>
+        <p>技术笔记、调试过程，以及那些终于想明白的瞬间。</p>
+        <div class="notes-count"><strong>{String(posts.length).padStart(2, '0')}</strong><span>篇公开笔记</span></div>
+        <div class="notes-browse"><a href="/categories">按分类浏览 ↗</a><a href="/tags">探索标签 ↗</a></div>
+      </div>
+      <div class="notes-list">
+        {posts.slice(0, 4).map((post, i) => (
+          <a href={postUrl(post)} class="note-row" data-reveal>
+            <span class="note-index">{String(i + 1).padStart(2, '0')}</span>
+            <div class="note-copy"><p class="note-meta"><time datetime={post.data.date.toISOString()}>{fmtDate(post.data.date)}</time>{post.data.tags[0] && <span>{post.data.tags[0]}</span>}</p><h3>{post.data.title}</h3>{post.data.description && <p class="note-description">{post.data.description}</p>}</div>
+            <span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+        {posts.length === 0 && <p class="empty-notes">下一篇笔记，正在路上。</p>}
+      </div>
+    </div>
+  </section>
 
-      <!-- 文章分类 -->
-      <a href="/categories" class="card p-6 group hover:border-accent/50 transition-colors">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="text-2xl">📂</span>
-          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">文章分类</h3>
-        </div>
-        <p class="text-sm text-ink-dim mb-3">按主题浏览文章</p>
-        <span class="font-mono text-xs text-accent">{categories.length} 个分类</span>
-      </a>
-
-      <!-- 标签云 -->
-      <a href="/tags" class="card p-6 group hover:border-accent/50 transition-colors">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="text-2xl">🏷️</span>
-          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">标签云</h3>
-        </div>
-        <p class="text-sm text-ink-dim mb-3">通过标签查找内容</p>
-        <span class="font-mono text-xs text-accent">{tags.length} 个标签</span>
-      </a>
-
-      <!-- 关于我 -->
-      <a href="/about" class="card p-6 group hover:border-accent/50 transition-colors">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="text-2xl">👤</span>
-          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">关于我</h3>
-        </div>
-        <p class="text-sm text-ink-dim mb-3">个人介绍与获奖经历</p>
-        <span class="font-mono text-xs text-accent">了解更多 →</span>
-      </a>
-
-      <!-- 联系方式 -->
-      <a href="/contact" class="card p-6 group hover:border-accent/50 transition-colors">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="text-2xl">✉️</span>
-          <h3 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">联系我</h3>
-        </div>
-        <p class="text-sm text-ink-dim mb-3">获取联系方式</p>
-        <span class="font-mono text-xs text-accent">保持联系 →</span>
-      </a>
+  <section class="site-container home-section">
+    <div class="about-banner" data-reveal>
+      <div><p class="eyebrow">03 / BEHIND THE CODE</p><h2>保持好奇，持续构建。</h2><p>关于我的学习、技能，以及一路走来的故事。</p></div>
+      <a href="/about" class="button button-secondary">认识一下 <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 </BaseLayout>

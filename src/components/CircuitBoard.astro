@@ -1,0 +1,41 @@
+---
+import { site } from '../config';
+---
+<div class="circuit-scene">
+  <div class="circuit-scene-top"><span><span class="status-dot"></span> THE EMBEDDED LAB</span><span>FIG. 001</span></div>
+  <svg class="circuit-board" viewBox="0 0 500 410" fill="none" role="img" aria-label="嵌入式电路示意图，青色信号沿线路缓慢流动">
+    <defs>
+      <linearGradient id="board-fill" x1="70" y1="60" x2="450" y2="350" gradientUnits="userSpaceOnUse"><stop stop-color="currentColor" stop-opacity=".07" /><stop offset="1" stop-color="currentColor" stop-opacity=".01" /></linearGradient>
+      <linearGradient id="chip-fill" x1="195" y1="150" x2="310" y2="270" gradientUnits="userSpaceOnUse"><stop stop-color="currentColor" stop-opacity=".18" /><stop offset="1" stop-color="currentColor" stop-opacity=".04" /></linearGradient>
+      <pattern id="board-dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="currentColor" opacity=".2" /></pattern>
+    </defs>
+    <g class="board-assembly">
+      <rect x="55" y="52" width="390" height="306" rx="22" fill="url(#board-fill)" stroke="currentColor" stroke-opacity=".25" />
+      <rect x="56" y="53" width="388" height="304" rx="21" fill="url(#board-dots)" />
+      {[ [74, 71], [426, 71], [74, 339], [426, 339] ].map(([cx, cy]) => <circle cx={cx} cy={cy} r="4" stroke="currentColor" stroke-opacity=".4" />)}
+      <g class="circuit-traces" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+        <path d="M55 140h66l35 35h43M55 156h58l35 35h51M251 52v56l-20 20v24M267 52v61l-20 20v19M445 130h-76l-48 48h-20M445 146h-67l-48 48h-29M445 273h-72l-37-37h-35M445 289h-80l-37-37h-27M55 278h60l41-41h43M55 294h68l41-41h35M251 358v-47l-20-20v-24M267 358v-54l-20-20v-17" />
+        <path d="M151 90v35l28 28M350 320v-34l-28-28M98 208h37M368 209h36" stroke-opacity=".45" />
+      </g>
+      <g class="circuit-pulses" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M55 140h66l35 35h43" /><path d="M251 52v56l-20 20v24" style="animation-delay: -2s" /><path d="M301 194h29l48-48h67" style="animation-delay: -1s" /><path d="M301 236h35l37 37h72" style="animation-delay: -3s" /><path d="M251 358v-47l-20-20v-24" style="animation-delay: -1.5s" /><path d="M55 278h60l41-41h43" style="animation-delay: -.8s" />
+      </g>
+      <g class="chip-pins" stroke="currentColor" stroke-width="4" stroke-linecap="round">
+        {[168, 182, 196, 210, 224, 238, 252].map(y => <><path d={`M187 ${y}h12`} /><path d={`M301 ${y}h12`} /></>)}
+        {[208, 222, 236, 250, 264, 278, 292].map(x => <><path d={`M${x} 140v12`} /><path d={`M${x} 267v12`} /></>)}
+      </g>
+      <rect class="chip-shadow" x="199" y="152" width="102" height="115" rx="9" />
+      <rect x="199" y="152" width="102" height="115" rx="9" fill="url(#chip-fill)" stroke="currentColor" stroke-opacity=".7" />
+      <rect x="207" y="160" width="86" height="99" rx="5" stroke="currentColor" stroke-opacity=".17" />
+      <circle cx="215" cy="168" r="2" fill="currentColor" opacity=".8" />
+      <text x="250" y="207" text-anchor="middle" class="chip-name">{site.name.length > 8 ? site.name.slice(0, 8) : site.name}</text>
+      <text x="250" y="228" text-anchor="middle" class="chip-subtitle">EMBEDDED</text>
+      <g stroke="currentColor" stroke-opacity=".5"><rect x="92" y="95" width="40" height="18" rx="3" /><path d="M98 101h28m-28 6h28" /><rect x="353" y="305" width="40" height="18" rx="3" /><path d="M359 311h28m-28 6h28" /></g>
+      <g class="board-labels"><text x="77" y="129">UART</text><text x="381" y="119">SPI</text><text x="77" y="318">GPIO</text><text x="375" y="258">I²C</text><text x="284" y="85">VCC</text><text x="285" y="335">GND</text></g>
+      <g fill="currentColor"><circle cx="98" cy="208" r="3" opacity=".6" /><circle cx="404" cy="209" r="3" opacity=".6" /><circle class="board-led" cx="409" cy="98" r="3" /><circle cx="398" cy="98" r="3" opacity=".2" /></g>
+    </g>
+    <path d="M30 80V28h52M418 28h52v52M470 330v52h-52M82 382H30v-52" stroke="currentColor" stroke-opacity=".3" />
+    <text x="250" y="397" text-anchor="middle" class="board-caption">HARDWARE × SOFTWARE × CURIOSITY</text>
+  </svg>
+  <div class="circuit-scene-bottom"><span class="wave-icon" aria-hidden="true">⌁</span><span>一行代码，一个新的可能。</span><button type="button" class="motion-toggle" aria-pressed="false" data-motion-toggle title="暂停电路及光标动画">暂停动效</button></div>
+</div>

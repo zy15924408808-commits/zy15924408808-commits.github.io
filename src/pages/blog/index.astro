@@ -12,30 +12,29 @@ const categories = groupByCategory(posts);
 ---
 
 <BaseLayout title="博客" description="我的学习笔记与思考。">
-  <section class="mx-auto max-w-3xl px-6 py-16">
-    <p class="font-mono text-sm text-accent mb-4">$ blogs</p>
-    <h1 class="text-4xl font-bold mb-3">博客</h1>
-    <div class="flex items-center gap-4 mb-12">
-      <p class="text-ink-dim">学习笔记、项目记录与一些思考。</p>
-      <a href="/categories" class="text-sm text-ink-dim hover:text-accent transition-colors whitespace-nowrap">分类 →</a>
-      <a href="/tags" class="text-sm text-ink-dim hover:text-accent transition-colors whitespace-nowrap">标签 →</a>
+  <section class="mx-auto max-w-3xl px-6 py-16 writing-page">
+    <div class="page-intro" data-reveal>
+      <p class="eyebrow">THE NOTEBOOK / {String(posts.length).padStart(2, '0')} ENTRIES</p>
+      <h1>学习，思考，记录<span class="heading-dot">.</span></h1>
+      <p>记录技术的细节，也记录成长的轨迹。</p>
+      <div class="archive-links"><a href="/categories">按分类浏览 ↗</a><a href="/tags">探索标签 ↗</a></div>
     </div>
 
     {posts.length === 0 ? (
       <p class="text-ink-dim">还没有文章,尽情创作吧！</p>
     ) : (
       categories.map(([cat, catPosts]) => (
-        <div class="mb-12">
+        <div class="blog-group" data-reveal>
           <a href={`/categories/${cat}`} class="group inline-flex items-center gap-2 mb-4">
             <span class="font-mono text-accent">▸</span>
             <h2 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors">{cat}</h2>
             <span class="text-xs text-ink-faint">{catPosts.length}</span>
           </a>
-          <ul class="divide-y divide-line border-l border-line pl-5 ml-1">
+          <ul class="blog-entry-list divide-y divide-line">
             {catPosts.map((post) => (
               <li>
                 <a href={postUrl(post)} class="group block py-4">
-                  <div class="flex items-baseline justify-between gap-4">
+                  <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                     <span class="text-ink group-hover:text-accent transition-colors font-medium">{post.data.title}</span>
                     <span class="font-mono text-xs text-ink-faint whitespace-nowrap">{fmtDate(post.data.date)}</span>
                   </div>

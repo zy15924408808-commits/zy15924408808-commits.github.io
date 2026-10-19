@@ -100,4 +100,35 @@ test('导入 HTTP 接口验证会话，先预览不写入，再保存正文到�
   assert.equal((await store.listContent('blog')).length,0);
   const imported = await send('import',article); assert.equal(imported.status,200);
   assert.equal((await store.readContent('blog',(await imported.json()).path)).body,article.text);
+  const project = await send('import',{...article,collection:'projects',name:'项目.md'});
+  assert.equal(project.status,200);
+  const result = await project.json(); assert.equal(result.collection,'projects');
+  assert.equal((await store.readContent('projects',result.path)).data.title,'串口打印');
+});
+
+test('项目 Markdown 生成简介并保留技术栈和链接，同名另存不覆盖',async t => {
+  const {store} = await fixture(t);
+  const source = {...article,collection:'projects',name:'README.md',text:'---\nstack: STM32, FreeRTOS\nrepo: https://github.com/test/project\nlink: https://example.test\norder: 3\n---\n# 气象时钟\n\n采集温湿度并显示在屏幕上。\n'};
+  const prepared = await prepareImport(store,source);
+  assert.equal(prepared.data.description,'采集温湿度并显示在屏幕上。');
+  assert.deepEqual(prepared.data.stack,['STM32','FreeRTOS']); assert.equal(prepared.data.draft,undefined);
+  const first = await importArticle(store,source), second = await importArticle(store,source);
+  assert.equal(first.path,'readme.md'); assert.equal(second.path,'readme-2.md');
+  const saved = await store.readContent('projects',first.path);
+  assert.equal(saved.data.repo,'https://github.com/test/project'); assert.equal(saved.data.order,3);
+  assert.equal((await store.listContent('blog')).length,0);
+  await assert.rejects(prepareImport(store,{...source,text:'---\nrepo: javascript:alert(1)\n---\n# 项目'}),/http/);
+  await assert.rejects(prepareImport(store,{...source,collection:'awards'}),/只支持/);
+});
+
+test('项目正文和封面共用图片只复制一次，已有封面保留、缺失封面可稍后补充',async t => {
+  const {store} = await fixture(t);
+  const source = {...article,collection:'projects',text:'---\nimage: assets/cover.png\ndescription: 项目简介\n---\n# 项目\n\n![[assets/cover.png]]\n',assets:[{path:'assets/cover.png',base64:png}]};
+  const result = await importArticle(store,source), saved = await store.readContent('projects',result.path);
+  assert.equal(result.images,1); assert.match(saved.data.image,/^cover-.*\.png$/); assert.match(saved.body,/\/projects\/cover-/);
+  assert.equal((await store.media())[0].bucket,'projects');
+  const existing = await importArticle(store,{...source,text:`---\nimage: ${saved.data.image}\n---\n# 已有封面\n`,assets:[]});
+  assert.equal(existing.images,0); assert.equal((await store.readContent('projects',existing.path)).data.image,saved.data.image);
+  const missing = await importArticle(store,{...source,text:'---\nimage: missing.png\n---\n# 缺图\n',assets:[],allowMissing:true});
+  assert.equal((await store.readContent('projects',missing.path)).data.image,undefined);
 });
