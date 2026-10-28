@@ -1,0 +1,2 @@
+# Windows 启动脚本必须保留 CRLF，避免中文文件名调用被 cmd 错误解析。
+*.cmd text eol=crlf

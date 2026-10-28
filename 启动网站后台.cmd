@@ -13,5 +13,5 @@ if not exist node_modules\astro\astro.js (
   pause
   exit /b 1
 )
-node admin\server.mjs --open
-pause
+node admin\launch.mjs
+if errorlevel 1 pause

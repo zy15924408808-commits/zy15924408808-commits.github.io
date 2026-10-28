@@ -1,13 +1,17 @@
 # 本机内容后台
 
-在项目根目录双击 **启动网站后台.cmd**，会自动打开浏览器。也可以运行：
+在项目根目录双击 **打开网站管理.cmd**（原来的 **启动网站后台.cmd** 也可以）。程序会自动检查后台：未启动时在后台启动，已启动时直接打开管理页面，不会重复占用端口。启动窗口自动关闭，关闭浏览器也不会停止后台。可以右键这个文件，通过 Windows「发送到 → 桌面快捷方式」创建桌面入口。
+
+普通浏览器书签只能打开网址，不能启动本机程序；请用上述文件或它的快捷方式。重启电脑后再双击即可，无需设置开机自启。启动日志保存在 `.admin-backups/startup-output.log` 和 `.admin-backups/startup-error.log`。
+
+也可以在终端中运行：
 
 ```sh
 npm install
 npm run admin
 ```
 
-打开 http://127.0.0.1:4322 。保持终端运行，按 Ctrl+C 关闭后台和它启动的网站预览。端口占用时，可在 PowerShell 中用 `$env:ADMIN_PORT=4323; npm run admin` 更换端口。
+打开 http://127.0.0.1:4322 。`npm run admin` 是前台运行方式，需要保持终端运行，按 Ctrl+C 关闭。端口占用时，可在 PowerShell 中用 `$env:ADMIN_PORT=4323; node admin/launch.mjs` 更换端口。需要停止后台时，可在 Windows 任务管理器按 `/api/health` 中的 PID 找到对应进程再结束。
 
 ## 日常使用
 

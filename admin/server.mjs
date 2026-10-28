@@ -79,6 +79,7 @@ export function createAdmin({ root = path.resolve(directory, '..'), publisher = 
       }
       if (route.startsWith('/api/')) {
         if (request.method !== 'GET' && request.headers['x-admin-token'] !== token) fail('后台会话已失效，请刷新页面。', 403);
+        if (route === '/api/health' && request.method === 'GET') return json({ app: 'wind-studio', status: 'ok', root: path.resolve(root), pid: process.pid });
         if (route === '/api/bootstrap' && request.method === 'GET') return json({ token, settings: await store.readSettings(), content: Object.fromEntries(await Promise.all(['blog', 'projects', 'awards'].map(async c => [c, await store.listContent(c)]))), git: await publisher.status(), media: await store.media() });
         if (route === '/api/settings' && request.method === 'PUT') return json(await locked(async () => { const body = await jsonBody(request); return { version: await store.saveSettings(body.data, body.version) }; }));
         if (route === '/api/content' && request.method === 'GET') return json(await store.readContent(url.searchParams.get('collection'), url.searchParams.get('path')));
